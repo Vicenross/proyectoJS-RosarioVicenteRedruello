@@ -18,7 +18,7 @@ const servicios= [
     
 ]
 
-let turnoEnProceso = []
+let turnoEnProceso = {}
 
 
 
@@ -80,10 +80,11 @@ function guardarTurno() {
 
   localStorage.setItem("turnos", JSON.stringify(turnos));
 
-  turnoEnProceso = {};
+   
   mostrar("agendados");
+  turnoEnProceso = {};
 }
- guardarTurno()
+
 
 
 // Borrar turno
@@ -97,29 +98,24 @@ function borrarTurno(index) {
 // Mostrar turnos guardados
 function cargarTurnos() {
   const lista = document.getElementById("listaTurnos");
-    lista.innerHTML = "";
-
+  lista.innerHTML = "";
   let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
 
   turnos.forEach((turno, index) => {
     const div = document.createElement("div");
-    div.className = "card";
-
-    // Creamos todo el contenido con innerHTML
-    div.innerHTML = `
-      <h3>Turno confirmado para ${turno.servicio}</h3>
-      <p>Fecha: ${turno.fecha} - ${turno.hora} </P>
-      <p>Nombre: ${turno.nombre} ${turno.apellido}</p>
-      <h4>Contacto</h4>
-      <p>Telefono (${turno.telefono})</p>
-      <p>Mail: ${turno.mail}</p>
-      <button class="delete-btn" data-index="${index}">Borrar</button>
-    `;
+    div.className = "card"
+    div.innerHTML = `<h3>Turno confirmado para ${turno.servicio}</h3>
+                     <p>Fecha: ${turno.fecha} - ${turno.hora} </P>
+                     <p>Nombre: ${turno.nombre} ${turno.apellido}</p>
+                     <h4>Contacto</h4>
+                     <p>Telefono (${turno.telefono})</p>
+                     <p>Mail: ${turno.mail}</p>
+                     <button class="delete-btn" data-index="${index}">Borrar</button>`;
 
     lista.appendChild(div);
   });
 
-  // Agregamos eventos a los botones de borrar
+
   document.querySelectorAll(".delete-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const index = parseInt(btn.dataset.index);
@@ -129,12 +125,11 @@ function cargarTurnos() {
 }
 
 
-
+document.getElementById("btnGuardarTurno").addEventListener("click", guardarTurno);
 document.getElementById("btnReservar").addEventListener("click", () => mostrar("reservar"));
 document.getElementById("btnServicios").addEventListener("click", () => mostrar("reservar"));
 document.getElementById("btnAgendados").addEventListener("click", () => mostrar("agendados"));
 document.getElementById("btnContinuarDatos").addEventListener("click", irFormularioDatos);
-document.getElementById("btnGuardarTurno").addEventListener("click", guardarTurno);
 
 
 
