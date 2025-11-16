@@ -1,13 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- JS -->
-     <script defer src="./js/main.js"></script>
-    <title>Entrega 1 Rosario Vicente Redruello</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- JS -->
+  <script defer src="./js/main.js"></script>
+  <!-- CSS -->
+  <link rel="stylesheet" href="./css/styles.css">
+
+  <title>Entrega 2 Rosario Vicente Redruello</title>
+
 </head>
+
 <body>
-    <h1>Entrega 1 - Rosario Vicente Redruello</h1>
+
+  <h1>Turnero de Cosmetología</h1>
+
+  <nav>
+    <button class="btn" id="btnReservar">Reservar turno</button>
+    <button class="btn" id="btnServicios">Nuestros servicios</button>
+    <button class="btn" id="btnAgendados">Turnos agendados</button>
+  </nav>
+
+  <section id="reservar" class_="visible">
+    <h2>Elegir servicio</h2>
+    <div id="listaServicios">
+
+    </div>
+  </section>
+
+  <section id="formFechaHora">
+    <h2>Seleccionar fecha y hora</h2>
+    <input type="date" id="fecha" />
+    <input type="time" id="hora" />
+    <button class="btn" id="btnContinuarDatos">Continuar</button>
+  </section>
+
+  <section id="formDatos">
+    <h2>Datos de la Reserva</h2>
+    <input type="text" id="nombre" placeholder="Nombre" required>
+    <input type="text" id="apellido" placeholder="Apellido" required>
+    <input type="email" id="mail" placeholder="Mail" required>
+    <input type="tel" id="telefono" placeholder="Teléfono" required >
+    <button class="btn" id="btnGuardarTurno">Confirmar Turno</button>
+  </section>
+
+  <section id="agendados">
+    <h2>Turnos Agendados</h2>
+    <div id="listaTurnos">
+      
+    </div>
+  </section>
+
+
 </body>
+
 </html>

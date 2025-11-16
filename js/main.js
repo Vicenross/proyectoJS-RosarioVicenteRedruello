@@ -1,83 +1,145 @@
-//Turnero de cosmetologa
+// listado de SERVICIOS
+const servicios= [
+    {
+        id: 1, 
+        nombre: "Radiofrecuencia", 
+        precio: 150
+    },
+    {
+        id: 2, 
+        nombre: "Extracciones", 
+        precio: 30
+    },
+    {
+        id: 3, 
+        nombre: "Limpieza Facial",
+        precio: 50
+    },
+    
+]
 
-//primera interaccion: necesitas un turno si o no
-let continuar = true
+let turnoEnProceso = []
 
-let sacarturno = prompt("Desea sacar un turno? (si/no)").toLowerCase()
-if (sacarturno == "si") {
-    console.log("Elija el servicio deseado")
-} else {
-    (sacarturno == "no")
-    continuar = false
-    console.log("Gracias por su visita")
+
+
+// Mostrar u ocultar secciones
+function mostrar(id) {
+  document.querySelectorAll("section").forEach(sec => sec.classList.remove("visible"));
+  document.getElementById(id).classList.add("visible");
+
+  if (id === "agendados") cargarTurnos();
 }
 
-//segunda interaccion: conoce los servicios que ofrecemos
 
-const servicios = ["Limpieza facial profunda", "Extracciones", "Radiofrecuencia"]
-for (const servicio of servicios) {
-    console.log("Servicio: "+servicio)
+// Renderizado card servicios
 
+function cargarServicios(servicios) {
+  const cont = document.getElementById("listaServicios");
+
+  servicios.forEach(serv => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `<h3>${serv.nombre}</h3>
+                     <h4>€ ${serv.precio}</h4>
+      <button class="btn elegir-servicio" data-id="${serv.id}">Ver diponibilidad</button>`;
+
+    cont.appendChild(div);
+  });
+
+  document.querySelectorAll(".elegir-servicio").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = parseInt(btn.dataset.id);
+      seleccionarServicio(id);
+    });
+  });
 }
 
-// tercer interaccion: seleccionar servicio
 
-while (continuar) {
-    let menu = parseInt(prompt("\n 1-Limpieza facial profunda \n 2-Extracciones \n 3-Radiofrecuencia"))
-
-    switch (menu) {
-        case 1:
-            console.log("Servicio seleccionado: Limpieza facial profunda: $50")
-            break
-        case 2:
-            console.log("Servicio seleccionado: Extracciones: $30")
-            break
-        case 3:
-            console.log("Servicio seleccionado: Radiofrecuencia: $150")
-            break
-        default:
-            console.log("Opcion incorrecta")
-    }
-
-    let confirmacion = prompt("Desea sacar otro turno? (si/no)").toLowerCase()
-    if (confirmacion == "no") {
-        continuar = false
-        alert("Proximo paso, elegir la fecha!")
-    }
+//seleccion de servicio, horario, datos cliente y envio a array
+function seleccionarServicio(id) {
+  turnoEnProceso.servicio = servicios.find(serv => serv.id === id).nombre;
+  mostrar("formFechaHora");
 }
 
-//cuarta interaccion selecciona fecha y hora
 
- function fecha () {
-    let mes = (prompt("Ingrese el mes en el que desea asistir"))
-    let dia = (prompt("Ingrese el dia en el que desea asistir"))
-    let hora = (prompt("Ingrese el horario en el que desea asistir"))
-    let resultado = dia+"/"+mes+" a las "+hora
-    console.log("Tu turno sera el "+resultado)
-    alert("Tu turno sera el "+resultado)
- }
-
-fecha ()
-
-//calcular precio final con iva - no se como hacer para solo mostrar el precio de la seleccion
-
-function calcularPrecioFinal(precio, impuesto) {
-    return precio*impuesto 
+function irFormularioDatos() {
+  turnoEnProceso.fecha = document.getElementById("fecha").value;
+  turnoEnProceso.hora = document.getElementById("hora").value;
+  mostrar("formDatos");
 }
 
-let precioextracciones = calcularPrecioFinal(30, 1.21);
-let precioradiofrecuencia = calcularPrecioFinal(150, 1.21);
-let preciolimpieza = calcularPrecioFinal(70, 1.21);
 
-console.log(`Precio final del servicio de Extracciones: ${precioextracciones}`);
-console.log(`Precio final del servicio de Limpieza: ${preciolimpieza}`);
-console.log(`Precio final del servicio de Radiofrecuencia: ${precioradiofrecuencia}`);
+function guardarTurno() {
+  turnoEnProceso.nombre = document.getElementById("nombre").value;
+  turnoEnProceso.apellido = document.getElementById("apellido").value;
+  turnoEnProceso.mail = document.getElementById("mail").value;
+  turnoEnProceso.telefono = document.getElementById("telefono").value;
 
-//Saludo final
+  const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+  turnos.push(turnoEnProceso);
+
+  localStorage.setItem("turnos", JSON.stringify(turnos));
+
+  turnoEnProceso = {};
+  mostrar("agendados");
+}
+ guardarTurno()
 
 
-alert("Te esperamos, gracias por confiar en nosotros!")
+// Borrar turno
+function borrarTurno(index) {
+  let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+  turnos.splice(index, 1);
+  localStorage.setItem("turnos", JSON.stringify(turnos));
+  cargarTurnos();
+}
+
+// Mostrar turnos guardados
+function cargarTurnos() {
+  const lista = document.getElementById("listaTurnos");
+    lista.innerHTML = "";
+
+  let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+
+  turnos.forEach((turno, index) => {
+    const div = document.createElement("div");
+    div.className = "card";
+
+    // Creamos todo el contenido con innerHTML
+    div.innerHTML = `
+      <h3>Turno confirmado para ${turno.servicio}</h3>
+      <p>Fecha: ${turno.fecha} - ${turno.hora} </P>
+      <p>Nombre: ${turno.nombre} ${turno.apellido}</p>
+      <h4>Contacto</h4>
+      <p>Telefono (${turno.telefono})</p>
+      <p>Mail: ${turno.mail}</p>
+      <button class="delete-btn" data-index="${index}">Borrar</button>
+    `;
+
+    lista.appendChild(div);
+  });
+
+  // Agregamos eventos a los botones de borrar
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const index = parseInt(btn.dataset.index);
+      borrarTurno(index);
+    });
+  });
+}
 
 
+
+document.getElementById("btnReservar").addEventListener("click", () => mostrar("reservar"));
+document.getElementById("btnServicios").addEventListener("click", () => mostrar("reservar"));
+document.getElementById("btnAgendados").addEventListener("click", () => mostrar("agendados"));
+document.getElementById("btnContinuarDatos").addEventListener("click", irFormularioDatos);
+document.getElementById("btnGuardarTurno").addEventListener("click", guardarTurno);
+
+
+
+
+cargarServicios(servicios)
+mostrar("reservar");
 
 
