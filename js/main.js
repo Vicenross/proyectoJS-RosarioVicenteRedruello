@@ -23,8 +23,8 @@ let turnoEnProceso = {}
 
 
 // Mostrar u ocultar secciones
-function mostrar(id) {
-  document.querySelectorAll("section").forEach(sec => sec.classList.remove("visible"));
+function mostrarSecciones(id) {
+  document.querySelectorAll("section").forEach(segmento => segmento.classList.remove("visible"));
   document.getElementById(id).classList.add("visible");
 
   if (id === "agendados") cargarTurnos();
@@ -34,22 +34,21 @@ function mostrar(id) {
 // Renderizado card servicios
 
 function cargarServicios(servicios) {
-  const cont = document.getElementById("listaServicios");
+  let contenedorServicios = document.getElementById("listaServicios");
 
-  servicios.forEach(serv => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `<h3>${serv.nombre}</h3>
-                     <h4>€ ${serv.precio}</h4>
-      <button class="btn elegir-servicio" data-id="${serv.id}">Ver diponibilidad</button>`;
-
-    cont.appendChild(div);
-  });
+  servicios.forEach(servicio => {
+    const div = document.createElement("div")
+    div.className = "card"
+    div.innerHTML = `<h3>${servicio.nombre}</h3>
+                     <h4>€ ${servicio.precio}</h4>
+                     <button class="btn elegir-servicio" id="${servicio.id}">Ver diponibilidad</button>`
+    contenedorServicios.appendChild(div);
+  })
 
   document.querySelectorAll(".elegir-servicio").forEach(btn => {
     btn.addEventListener("click", () => {
-      const id = parseInt(btn.dataset.id);
-      seleccionarServicio(id);
+      const servicioId = parseInt(btn.id);
+      seleccionarServicio(servicioId);
     });
   });
 }
@@ -57,15 +56,15 @@ function cargarServicios(servicios) {
 
 //seleccion de servicio, horario, datos cliente y envio a array
 function seleccionarServicio(id) {
-  turnoEnProceso.servicio = servicios.find(serv => serv.id === id).nombre;
-  mostrar("formFechaHora");
+  turnoEnProceso.servicio = servicios.find(servicio => servicio.id === id).nombre;
+  mostrarSecciones("formFechaHora");
 }
 
 
 function irFormularioDatos() {
   turnoEnProceso.fecha = document.getElementById("fecha").value;
   turnoEnProceso.hora = document.getElementById("hora").value;
-  mostrar("formDatos");
+  mostrarSecciones("formDatos");
 }
 
 
@@ -81,7 +80,7 @@ function guardarTurno() {
   localStorage.setItem("turnos", JSON.stringify(turnos));
 
    
-  mostrar("agendados");
+  mostrarSecciones("agendados");
   turnoEnProceso = {};
 }
 
@@ -110,7 +109,7 @@ function cargarTurnos() {
                      <h4>Contacto</h4>
                      <p>Telefono (${turno.telefono})</p>
                      <p>Mail: ${turno.mail}</p>
-                     <button class="delete-btn" data-index="${index}">Borrar</button>`;
+                     <button class="delete-btn" index="${index}">Borrar</button>`;
 
     lista.appendChild(div);
   });
@@ -118,7 +117,7 @@ function cargarTurnos() {
 
   document.querySelectorAll(".delete-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      const index = parseInt(btn.dataset.index);
+      const index = parseInt(btn.index);
       borrarTurno(index);
     });
   });
@@ -126,15 +125,15 @@ function cargarTurnos() {
 
 
 document.getElementById("btnGuardarTurno").addEventListener("click", guardarTurno);
-document.getElementById("btnReservar").addEventListener("click", () => mostrar("reservar"));
-document.getElementById("btnServicios").addEventListener("click", () => mostrar("reservar"));
-document.getElementById("btnAgendados").addEventListener("click", () => mostrar("agendados"));
+document.getElementById("btnReservar").addEventListener("click", () => mostrarSecciones("reservar"));
+document.getElementById("btnServicios").addEventListener("click", () => mostrarSecciones("reservar"));
+document.getElementById("btnAgendados").addEventListener("click", () => mostrarSecciones("agendados"));
 document.getElementById("btnContinuarDatos").addEventListener("click", irFormularioDatos);
 
 
 
 
 cargarServicios(servicios)
-mostrar("reservar");
+mostrarSecciones("reservar")
 
 
