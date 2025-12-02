@@ -1,0 +1,19 @@
+
+[
+  {
+    "id": 1,
+    "nombre": "Radiofrecuencia",
+    "precio": 150
+  },
+  {
+    "id": 2,
+    "nombre": "Extracciones",
+    "precio": 30
+  },
+  {
+    "id": 3,
+    "nombre": "Limpieza Facial",
+    "precio": 50
+  }
+
+]

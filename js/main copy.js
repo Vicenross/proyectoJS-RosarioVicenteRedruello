@@ -1,5 +1,4 @@
 
-
 let turnoEnProceso = {}
 
 
@@ -11,24 +10,27 @@ function mostrarSecciones(id) {
   if (id === "agendados") cargarTurnos();
 }
 
-//importar db
+
 const contenedorServicios = document.getElementById("listaServicios");
 const URL = "./db/data.json"
+let serviciosData =[];
 
 function obtenerServicios() {
   fetch(URL)
     .then(response => response.json())
     .then(data => {
+      serviciosData = data;
       cargarServicios(data);
 
     })
     .catch(err => {
-      contenedorServicios.innerHTML = `<p class="error">Hubo un error y no es posible cargar los servicios.</p>`, err}
-    )
-    
+    contenedorServicios.innerHTML = `<p class="error">Hubo un error y no es posible cargar los servicios.</p>`;
+    })
+
 }
 
 // Renderizado card servicios
+
 function cargarServicios(servicios) {
 
   servicios.forEach(servicio => {
@@ -39,58 +41,23 @@ function cargarServicios(servicios) {
                      <button class="btn elegir-servicio" id="${servicio.id}">Ver disponibilidad</button>`
     contenedorServicios.appendChild(div);
   })
-  seleccionarServicio(servicios)
+
+  document.querySelectorAll(".elegir-servicio").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const servicioId = parseInt(btn.id);
+      seleccionarServicio(servicioId);
+    });
+  });
 }
 
-function seleccionarServicio(dataServicios) {
-  addButton = document.querySelectorAll(".elegir-servicio");
-  addButton.forEach(button => {
-    button.onclick = (e) => {
-      let servicioId = parseInt(e.currentTarget.id);
-      const servicioSeleccionado = dataServicios.find(servicio => servicio.id === servicioId);
+function seleccionarServicio(id) {
+  const servicioSeleccionado  = serviciosData.find(servicio => servicio.id === id).nombre;
 
-      turnoEnProceso.servicio = servicioSeleccionado.nombre;
-      mostrarSecciones("formFechaHora");
-
-    }
-  })
-
+  turnoEnProceso.servicio = servicioSeleccionado;
+  mostrarSecciones("formFechaHora");
 }
+
 obtenerServicios()
-
-//seleccion de horario, datos cliente y envio a array
-
-function irFormularioDatos() {
-  turnoEnProceso.fecha = document.getElementById("fecha").value;
-  turnoEnProceso.hora = document.getElementById("hora").value;
-  mostrarSecciones("formDatos");
-}
-document.getElementById("btnContinuarDatos").addEventListener("click", irFormularioDatos);
-
-
-const formulario = document.getElementById("formulariocliente")
-formulario. addEventListener("submit", function (event) {
-  event.preventDefault();
-
-  turnoEnProceso.nombre = document.getElementById("nombre").value;
-  turnoEnProceso.apellido = document.getElementById("apellido").value;
-  turnoEnProceso.mail = document.getElementById("mail").value;
-  turnoEnProceso.telefono = document.getElementById("telefono").value;
-  
-  const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
-  turnos.push(turnoEnProceso);
-
-  localStorage.setItem("turnos", JSON.stringify(turnos));
-
-
-  mostrarSecciones("agendados");
-  turnoEnProceso = {};
-
-formulario.reset()
-});
-
-
-
 
 
 
@@ -99,17 +66,14 @@ function borrarTurno(index) {
   let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
   turnos.splice(index, 1);
   localStorage.setItem("turnos", JSON.stringify(turnos));
-  cargarTurnos(turnos);
+  cargarTurnos();
 }
 
 // Mostrar turnos guardados
-
-
 function cargarTurnos() {
   const lista = document.getElementById("listaTurnos");
   lista.innerHTML = "";
-  let turnos = localStorage.getItem("turnos")
-  turnos = JSON.parse(turnos) || [];
+  let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
 
   turnos.forEach((turno, index) => {
     const div = document.createElement("div");
@@ -122,6 +86,7 @@ function cargarTurnos() {
                      <p>Mail: ${turno.mail}</p>
                      <button class="delete-btn" index="${index}">Borrar</button>
                      <button class="editar-btn" index = "${index}" >Editar</button >`
+
 
     lista.appendChild(div);
   });
@@ -139,6 +104,8 @@ function cargarTurnos() {
 document.getElementById("btnReservar").addEventListener("click", () => mostrarSecciones("reservar"));
 document.getElementById("btnServicios").addEventListener("click", () => mostrarSecciones("reservar"));
 document.getElementById("btnAgendados").addEventListener("click", () => mostrarSecciones("agendados"));
+
+
 
 
 

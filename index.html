@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- JS -->
   <script defer src="./js/main.js"></script>
+  <script defer src="./js/formulario.js"></script>
+
+
   <!-- CSS -->
   <link rel="stylesheet" href="./css/styles.css">
 
@@ -30,8 +33,11 @@
     </div>
   </section>
 
+
   <section id="formFechaHora">
     <h2>Seleccionar fecha y hora</h2>
+   
+
     <input type="date" id="fecha" />
     <input type="time" id="hora" />
     <button class="btn" id="btnContinuarDatos">Continuar</button>
@@ -39,21 +45,24 @@
 
   <section id="formDatos">
     <h2>Datos de la Reserva</h2>
-    <form>
-    <input type="text" id="nombre" placeholder="Nombre" required>
-    <input type="text" id="apellido" placeholder="Apellido" required>
-    <input type="email" id="mail" placeholder="Mail" required>
-    <input type="tel" id="telefono" placeholder="Teléfono" required >
-    <button class="btn" id="btnGuardarTurno">Confirmar Turno</button>
+    <form id="formulariocliente">
+      <input type="text" id="nombre" placeholder="Nombre" value="Rosario" required>
+      <input type="text" id="apellido" placeholder="Apellido" value="Vicente" required>
+      <input type="email" id="mail" placeholder="Mail" value="vicenteredru@gmail.com" required>
+      <input type="tel" id="telefono" placeholder="Teléfono" value="123456061" required>
+      <button class="btn" type="submit">Confirmar Turno</button>
     </form>
   </section>
 
   <section id="agendados">
     <h2>Turnos Agendados</h2>
     <div id="listaTurnos">
-      
+
     </div>
   </section>
+
+
+
 
 
 </body>
