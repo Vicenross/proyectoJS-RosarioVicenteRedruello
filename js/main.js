@@ -23,9 +23,10 @@ function obtenerServicios() {
 
     })
     .catch(err => {
-      contenedorServicios.innerHTML = `<p class="error">Hubo un error y no es posible cargar los servicios.</p>`, err}
+      contenedorServicios.innerHTML = `<p class="error">Hubo un error y no es posible cargar los servicios.</p>`, err
+    }
     )
-    
+
 }
 
 // Renderizado card servicios
@@ -69,38 +70,40 @@ document.getElementById("btnContinuarDatos").addEventListener("click", irFormula
 
 
 const formulario = document.getElementById("formulariocliente")
-formulario. addEventListener("submit", function (event) {
+formulario.addEventListener("submit", function (event) {
   event.preventDefault();
 
   turnoEnProceso.nombre = document.getElementById("nombre").value;
   turnoEnProceso.apellido = document.getElementById("apellido").value;
   turnoEnProceso.mail = document.getElementById("mail").value;
   turnoEnProceso.telefono = document.getElementById("telefono").value;
-  
-  const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
-  turnos.push(turnoEnProceso);
 
+  const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+  if (turnoEnProceso.index !== undefined && turnoEnProceso.index !== null) {
+    turnos[turnoEnProceso.index] = {
+      servicio: turnoEnProceso.servicio,
+      fecha: turnoEnProceso.fecha,
+      hora: turnoEnProceso.hora,
+      nombre: turnoEnProceso.nombre,
+      apellido: turnoEnProceso.apellido,
+      mail: turnoEnProceso.mail,
+      telefono: turnoEnProceso.telefono
+    };
+    delete turnoEnProceso.index;
+  } else {
+    turnos.push(turnoEnProceso);
+  }
+  
   localStorage.setItem("turnos", JSON.stringify(turnos));
 
 
   mostrarSecciones("agendados");
   turnoEnProceso = {};
 
-formulario.reset()
+  formulario.reset()
 });
 
 
-
-
-
-
-// Borrar turno
-function borrarTurno(index) {
-  let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
-  turnos.splice(index, 1);
-  localStorage.setItem("turnos", JSON.stringify(turnos));
-  cargarTurnos(turnos);
-}
 
 // Mostrar turnos guardados
 
@@ -120,20 +123,58 @@ function cargarTurnos() {
                      <h4>Contacto</h4>
                      <p>Telefono (${turno.telefono})</p>
                      <p>Mail: ${turno.mail}</p>
-                     <button class="delete-btn" index="${index}">Borrar</button>
-                     <button class="editar-btn" index = "${index}" >Editar</button >`
+                     <button class="delete-btn grande-btn" index="${index}">Borrar</button>
+                     <button class="editar-btn grande-btn" index="${index}" >Editar</button >`
 
     lista.appendChild(div);
   });
 
-
-  document.querySelectorAll(".delete-btn").forEach(btn => {
+  const aEliminar = document.querySelectorAll(".delete-btn");
+  aEliminar.forEach(btn => {
     btn.addEventListener("click", () => {
       const index = parseInt(btn.index);
       borrarTurno(index);
     });
   });
+
+  const aEditar = document.querySelectorAll(".editar-btn");
+  aEditar.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const index = parseInt(btn.getAttribute("index"));
+      editarTurno(index);
+    });
+  });
+
 }
+
+// Borrar turno
+function borrarTurno(index) {
+  let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+  turnos.splice(index, 1);
+  localStorage.setItem("turnos", JSON.stringify(turnos));
+  cargarTurnos(turnos);
+}
+
+// editar turno
+function editarTurno(index) {
+  let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+  const turno = turnos[index];
+
+  turnoEnProceso = { ...turno, index };
+
+  document.getElementById("fecha").value = turno.fecha;
+  document.getElementById("hora").value = turno.hora;
+  document.getElementById("nombre").value = turno.nombre;
+  document.getElementById("apellido").value = turno.apellido;
+  document.getElementById("mail").value = turno.mail;
+  document.getElementById("telefono").value = turno.telefono;
+
+  mostrarSecciones("formFechaHora");
+
+}
+
+
+
 
 
 document.getElementById("btnReservar").addEventListener("click", () => mostrarSecciones("reservar"));
