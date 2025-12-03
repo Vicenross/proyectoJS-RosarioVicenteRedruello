@@ -24,9 +24,7 @@ function obtenerServicios() {
     })
     .catch(err => {
       contenedorServicios.innerHTML = `<p class="error">Hubo un error y no es posible cargar los servicios.</p>`, err
-    }
-    )
-
+    })
 }
 
 // Renderizado card servicios
@@ -101,6 +99,18 @@ formulario.addEventListener("submit", function (event) {
   turnoEnProceso = {};
 
   formulario.reset()
+  Toastify({
+  text: "Turno guardado, te esperamos!",
+  duration: 3000,
+  close: true,
+  gravity: "top", 
+  position: "center", 
+  stopOnFocus: true, // Prevents dismissing of toast on hover
+  style: {
+    background: "linear-gradient(to right, #ED7A77, #f1a4a2ff)",
+  },
+  
+}).showToast();
 });
 
 
@@ -172,9 +182,6 @@ function editarTurno(index) {
   mostrarSecciones("formFechaHora");
 
 }
-
-
-
 
 
 document.getElementById("btnReservar").addEventListener("click", () => mostrarSecciones("reservar"));
