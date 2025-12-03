@@ -4,10 +4,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
- 
+
   <!-- Toastify -->
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-  
+
+  <!-- vanilla calendar -->
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro/styles/index.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro/index.js"></script>
+
   <!-- JS -->
   <script defer src="./js/main.js"></script>
   <script defer src="./js/funcionsecciones.js"></script>
@@ -39,20 +44,32 @@
 
   <section id="formFechaHora">
     <h2>Seleccionar fecha y hora</h2>
+    <form id="formHorario">
+      <label>Fecha</label>
+      <input type="fecha" id="calendar" readonly required />
+      
+      <label>Hora</label>
+      <input type="hora" id="hora" readonly required />
 
-
-    <input type="date" id="fecha" />
-    <input type="time" id="hora" />
-    <button class="btn" id="btnContinuarDatos">Continuar</button>
+      <button class="btn" type="submit">Continuar</button>
+    </form>
   </section>
 
   <section id="formDatos">
     <h2>Datos de la Reserva</h2>
     <form id="formulariocliente">
-      <input type="text" id="nombre" placeholder="Nombre" value="Rosario" required>
-      <input type="text" id="apellido" placeholder="Apellido" value="Vicente" required>
+      <label>Nombre</label>
+      <input type="text" id="nombre" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+" placeholder="Nombre" value="Rosario" required>
+      
+      <label>Apellido</label>
+      <input type="text" id="apellido" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+" placeholder="Apellido" value="Vicente" required>
+      
+      <label>Email</label>
       <input type="email" id="mail" placeholder="Mail" value="vicenteredru@gmail.com" required>
-      <input type="tel" id="telefono" placeholder="Teléfono" value="123456061" required>
+      
+      <label>Telefono</label>
+      <input type="tel" id="telefono" pattern="[0-9]+" placeholder="Teléfono" value="123456061" required>
+      
       <button class="btn" type="submit">Confirmar Turno</button>
     </form>
   </section>
@@ -65,8 +82,8 @@
   </section>
 
 
-<!-- Toastify -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <!-- Toastify -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </body>
 
 </html>

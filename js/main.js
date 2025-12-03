@@ -1,5 +1,13 @@
 let turnoEnProceso = {}
 
+// Mostrar u ocultar secciones
+function mostrarSecciones(id) {
+  document.querySelectorAll("section").forEach(segmento => segmento.classList.remove("visible"));
+  document.getElementById(id).classList.add("visible");
+
+  if (id === "agendados") cargarTurnos();
+}
+
 //importar db
 const contenedorServicios = document.getElementById("listaServicios");
 const URL = "./db/data.json"
@@ -18,7 +26,6 @@ function obtenerServicios() {
 
 // Renderizado card servicios
 function cargarServicios(servicios) {
-
   servicios.forEach(servicio => {
     const div = document.createElement("div")
     div.className = "card"
@@ -36,27 +43,111 @@ function seleccionarServicio(dataServicios) {
     button.onclick = (e) => {
       let servicioId = parseInt(e.currentTarget.id);
       const servicioSeleccionado = dataServicios.find(servicio => servicio.id === servicioId);
-
       turnoEnProceso.servicio = servicioSeleccionado.nombre;
       mostrarSecciones("formFechaHora");
-
     }
   })
-
 }
 obtenerServicios()
 
-//seleccion de fecha y hora
+//seleccion de fecha y hora con vanilla calendar
+const { Calendar } = window.VanillaCalendarPro;
+const calendarInput = new Calendar('#calendar', {
+  inputMode: true,
+  positionToInput: 'auto',
+  onChangeToInput(self) {
+    if (!self.context.inputElement) return;
+    if (self.context.selectedDates[0]) {
+      self.context.inputElement.value = self.context.selectedDates[0];
+    } else {
+      self.context.inputElement.value = '';
+    }
+  },
 
-function irFormularioDatos() {
-  turnoEnProceso.fecha = document.getElementById("fecha").value;
-  turnoEnProceso.hora = document.getElementById("hora").value;
+  selectedTheme: 'light',
+  dateMin: new Date(),
+  dateMax: '2026-12-31',
+
+  //hora
+  selectionTimeMode: 24,
+  timeMinHour: 9,
+  timeMaxHour: 20,
+  onChangeTime(self) {
+    const fecha = document.getElementById("calendar").value;
+    const horaSeleccionada = self.context.selectedTime;
+
+    if (!fecha) return;
+
+    const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+    const ocupado = turnos.some(turno => turno.fecha === fecha && turno.hora === horaSeleccionada);
+
+    if (ocupado) {
+      document.getElementById("hora").value = '';
+      //alert toastify
+      Toastify({
+        text: "La hora ${horaSeleccionada} ya está ocupada. Por favor selecciona otro horario.",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "center",
+        style: {
+          background: "linear-gradient(to right, #ED7A77, #f1a4a2ff)",
+        },
+      }).showToast();
+    } else {
+      document.getElementById("hora").value = horaSeleccionada;
+      self.hide();
+    }
+  }
+});
+calendarInput.init();
+
+// submit de fecha y hora
+const formularioHorario = document.getElementById("formHorario")
+formularioHorario.addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const fecha = document.getElementById("calendar").value;
+  const hora = document.getElementById("hora").value;
+
+  if (!fecha) {
+    Toastify({
+      text: "Seleccioná una fecha",
+      duration: 3000,
+      close: true,
+      gravity: "top",
+      position: "center",
+      style: {
+        background: "linear-gradient(to right, #ED7A77, #f1a4a2ff)",
+      },
+    }).showToast();
+    return;
+  }
+  if (!hora) {
+    Toastify({
+      text: "Seleccioná una hora",
+      duration: 3000,
+      close: true,
+      gravity: "top",
+      position: "center",
+      style: {
+        background: "linear-gradient(to right, #ED7A77, #f1a4a2ff)",
+      },
+    }).showToast();
+    return;
+  }
+
+  turnoEnProceso.fecha = fecha;
+  turnoEnProceso.hora = hora;
+
+  formulario.reset()
+
   mostrarSecciones("formDatos");
-}
-document.getElementById("btnContinuarDatos").addEventListener("click", irFormularioDatos);
 
-//form datos cliente
+})
 
+
+//submit form datos cliente
 const formulario = document.getElementById("formulariocliente")
 formulario.addEventListener("submit", function (event) {
   event.preventDefault();
@@ -66,6 +157,7 @@ formulario.addEventListener("submit", function (event) {
   turnoEnProceso.mail = document.getElementById("mail").value;
   turnoEnProceso.telefono = document.getElementById("telefono").value;
 
+  //para que funcione editar
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
   if (turnoEnProceso.index !== undefined && turnoEnProceso.index !== null) {
     turnos[turnoEnProceso.index] = {
@@ -81,31 +173,28 @@ formulario.addEventListener("submit", function (event) {
   } else {
     turnos.push(turnoEnProceso);
   }
-  
   localStorage.setItem("turnos", JSON.stringify(turnos));
-
 
   mostrarSecciones("agendados");
   turnoEnProceso = {};
 
   formulario.reset()
 
+  //alert toastify
   Toastify({
-  text: "Turno guardado, te esperamos!",
-  duration: 3000,
-  close: true,
-  gravity: "top", 
-  position: "center", 
-  stopOnFocus: true, // Prevents dismissing of toast on hover
-  style: {
-    background: "linear-gradient(to right, #ED7A77, #f1a4a2ff)",
-  },
-  
-}).showToast();
+    text: "Turno guardado, te esperamos!",
+    duration: 3000,
+    close: true,
+    gravity: "top",
+    position: "center",
+    style: {
+      background: "linear-gradient(to right, #ED7A77, #f1a4a2ff)",
+    },
+
+  }).showToast();
 });
 
 // Mostrar turnos guardados, boton editar y eliminar
-
 function cargarTurnos() {
   const lista = document.getElementById("listaTurnos");
   lista.innerHTML = "";
@@ -117,7 +206,7 @@ function cargarTurnos() {
     div.className = "card"
     div.innerHTML = `<h3>Turno confirmado para ${turno.servicio}</h3>
                      <p>Fecha: ${turno.fecha} - ${turno.hora} </P>
-                     <p>Nombre: ${turno.nombre} ${turno.apellido}</p>
+                     <p>Nombre: ${turno.nombre}, ${turno.apellido}</p>
                      <h4>Contacto</h4>
                      <p>Telefono (${turno.telefono})</p>
                      <p>Mail: ${turno.mail}</p>
@@ -160,7 +249,7 @@ function editarTurno(index) {
 
   turnoEnProceso = { ...turno, index };
 
-  document.getElementById("fecha").value = turno.fecha;
+  document.getElementById("calendar").value = turno.fecha;
   document.getElementById("hora").value = turno.hora;
   document.getElementById("nombre").value = turno.nombre;
   document.getElementById("apellido").value = turno.apellido;
@@ -168,14 +257,13 @@ function editarTurno(index) {
   document.getElementById("telefono").value = turno.telefono;
 
   mostrarSecciones("formFechaHora");
-
 }
 
 
+// clicks
 document.getElementById("btnReservar").addEventListener("click", () => mostrarSecciones("reservar"));
 document.getElementById("btnServicios").addEventListener("click", () => mostrarSecciones("reservar"));
 document.getElementById("btnAgendados").addEventListener("click", () => mostrarSecciones("agendados"));
-
 
 
 mostrarSecciones("reservar")
