@@ -34,7 +34,7 @@ const calendarInput = new Calendar('#calendar', {
       document.getElementById("hora").value = '';
       //alert toastify
       Toastify({
-        text: "La hora ${horaSeleccionada} ya está ocupada. Por favor selecciona otro horario.",
+        text: "Horario no disponible, por favor selecciona otro horario.",
         duration: 3000,
         close: true,
         gravity: "top",
@@ -160,7 +160,7 @@ function cargarTurnos() {
     div.className = "card"
     div.innerHTML = `<h3>Turno confirmado para ${turno.servicio}</h3>
                      <p>Fecha: ${turno.fecha} - ${turno.hora} </P>
-                     <p>Nombre: ${turno.nombre}, ${turno.apellido}</p>
+                     <p>Nombre: ${turno.apellido}, ${turno.nombre}</p>
                      <h4>Contacto</h4>
                      <p>Telefono (${turno.telefono})</p>
                      <p>Mail: ${turno.mail}</p>
