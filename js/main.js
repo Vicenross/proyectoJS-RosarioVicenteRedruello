@@ -1,15 +1,4 @@
-
-
 let turnoEnProceso = {}
-
-
-// Mostrar u ocultar secciones
-function mostrarSecciones(id) {
-  document.querySelectorAll("section").forEach(segmento => segmento.classList.remove("visible"));
-  document.getElementById(id).classList.add("visible");
-
-  if (id === "agendados") cargarTurnos();
-}
 
 //importar db
 const contenedorServicios = document.getElementById("listaServicios");
@@ -57,7 +46,7 @@ function seleccionarServicio(dataServicios) {
 }
 obtenerServicios()
 
-//seleccion de horario, datos cliente y envio a array
+//seleccion de fecha y hora
 
 function irFormularioDatos() {
   turnoEnProceso.fecha = document.getElementById("fecha").value;
@@ -66,6 +55,7 @@ function irFormularioDatos() {
 }
 document.getElementById("btnContinuarDatos").addEventListener("click", irFormularioDatos);
 
+//form datos cliente
 
 const formulario = document.getElementById("formulariocliente")
 formulario.addEventListener("submit", function (event) {
@@ -99,6 +89,7 @@ formulario.addEventListener("submit", function (event) {
   turnoEnProceso = {};
 
   formulario.reset()
+
   Toastify({
   text: "Turno guardado, te esperamos!",
   duration: 3000,
@@ -113,10 +104,7 @@ formulario.addEventListener("submit", function (event) {
 }).showToast();
 });
 
-
-
-// Mostrar turnos guardados
-
+// Mostrar turnos guardados, boton editar y eliminar
 
 function cargarTurnos() {
   const lista = document.getElementById("listaTurnos");
