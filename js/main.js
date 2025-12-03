@@ -102,6 +102,11 @@ const calendarInput = new Calendar('#calendar', {
 });
 calendarInput.init();
 
+//mostrar el calendario tambien desde hora
+const inputHora = document.getElementById("hora");
+inputHora.addEventListener("focus", () => calendarInput.show());
+inputHora.addEventListener("click", () => calendarInput.show());
+
 // submit de fecha y hora
 const formularioHorario = document.getElementById("formHorario")
 formularioHorario.addEventListener("submit", function (event) {
@@ -140,7 +145,7 @@ formularioHorario.addEventListener("submit", function (event) {
   turnoEnProceso.fecha = fecha;
   turnoEnProceso.hora = hora;
 
-  formulario.reset()
+  formularioHorario.reset()
 
   mostrarSecciones("formDatos");
 
